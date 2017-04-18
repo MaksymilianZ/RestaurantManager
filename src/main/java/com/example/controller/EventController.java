@@ -5,7 +5,6 @@ import com.example.model.Person;
 import com.example.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  * Created by Maksymilian on 2017-04-18.
  */
 
-@Controller
+@RestController
 @RequestMapping("/events")
 public class EventController {
 
@@ -30,9 +29,16 @@ public class EventController {
         eventService.addEvent(event);
     }
 
+    @PostMapping("/deleteEvent")
+        public void delete(@RequestParam (required = false) String titleName){
+        System.out.println(titleName);
+        eventService.deleteEvent(titleName);
+    }
+
     @PostMapping(value = "/addPerson", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addPerson(@RequestBody Person person, @RequestParam(name = "eventTitle") String eventTitle) {
-        eventService.addPersonToEvent(person, eventTitle);
+    public void addPerson(@RequestBody Person person) {
+        eventService.addPerson(person);
+
     }
 }
 

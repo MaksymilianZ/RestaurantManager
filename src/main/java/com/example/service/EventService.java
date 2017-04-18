@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * Created by Maksymilian on 2017-04-18.
@@ -20,26 +21,31 @@ public class EventService {
 
     private EventRepository eventRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     public EventService(EventRepository eventRepository) {
         this.eventRepository=eventRepository;
     }
 
+    private List<Person> personToAdd;
+
     @Transactional
     public void addEvent(Event event) {
-        entityManager.persist(event);
+        eventRepository.save(event);
     }
 
     @Transactional
-    public void addPersonToEvent(Person person, String eventTitle) {
-        for (Event event : eventRepository.findAll()) {
-            if(event.getTitle().equals(eventTitle)){
-                event.getPeople().add(person);
+    public void deleteEvent(String title) {
+        List<Event> events = eventRepository.findAll();
+        for (Event event: events) {
+            if (event.getTitle().equals(title)){
+                eventRepository.delete(event);
             }
         }
+    }
+
+    @Transactional
+    public void addPerson(Person person) {
+        personToAdd.add(person);
     }
 
 }
