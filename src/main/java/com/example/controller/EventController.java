@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.model.Event;
 import com.example.model.Person;
+import com.example.modelDto.EventDto;
 import com.example.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,20 +26,33 @@ public class EventController {
     }
 
     @PostMapping(value = "/addEvent", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addEvent(@RequestBody Event event) {
-        eventService.addEvent(event);
+    public void addEvent(@RequestBody EventDto eventDto) {
+        eventService.addEvent(eventDto);
     }
 
-    @PostMapping("/deleteEvent")
-        public void delete(@RequestParam (required = false) String titleName){
-        System.out.println(titleName);
-        eventService.deleteEvent(titleName);
+    @PostMapping(path = "/deleteEventByTitle")
+        public void deleteByTitle(@RequestParam String titleName){
+        eventService.deleteEventByTitle(titleName);
     }
 
-    @PostMapping(value = "/addPerson", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addPerson(@RequestBody Person person) {
-        eventService.addPerson(person);
-
+    @DeleteMapping("/delete/{id_event}")
+    public void deleteById(@PathVariable Long id_event) {
+        eventService.deleteEventById(id_event);
     }
+
+    @ResponseBody
+    @PostMapping(value = "/checkEventDate")
+        public String checkEventDate (@RequestParam Integer year, @RequestParam Integer month, @RequestParam Integer day) {
+         return eventService.checkDate(year,month,day);
+    }
+
+    @ResponseBody
+    @PostMapping (value = "/allEvents")
+    public List<EventDto> getAllEvents(@RequestParam Integer year){
+        return eventService.allEvents(year);
+    }
+
+
+
 }
 

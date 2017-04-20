@@ -23,7 +23,7 @@ public class Person implements Serializable {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
-    Person() {
+    public Person() {
     }
 
     public Person(String firstName, String lastName, String pesel, String details, Event event) {

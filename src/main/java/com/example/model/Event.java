@@ -25,10 +25,12 @@ public class Event implements Serializable {
     private Integer month;
     private Integer day;
     private String description;
+
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
     private List<Person> people = new ArrayList<>();
 
-    Event(){}
+    public Event(){}
 
     public Event(String title, Integer year, Integer month, Integer day, String description, List<Person> people) {
         this.title = title;
