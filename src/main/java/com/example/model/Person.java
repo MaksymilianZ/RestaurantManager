@@ -1,7 +1,8 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,8 @@ public class Person implements Serializable {
     private String pesel;
     private String details;
     @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_event")
+    @JsonIgnore
     private Event event;
 
     public Person() {
@@ -111,13 +114,13 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "Person[" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", pesel='" + pesel + '\'' +
                 ", details='" + details + '\'' +
                 ", event=" + event +
-                '}';
+                ']';
     }
 }

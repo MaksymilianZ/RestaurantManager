@@ -1,11 +1,14 @@
 package com.example.controller;
 
+
 import com.example.model.Event;
-import com.example.model.Person;
 import com.example.modelDto.EventDto;
 import com.example.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +29,7 @@ public class EventController {
     }
 
     @PostMapping(value = "/addEvent", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addEvent(@RequestBody EventDto eventDto) {
         eventService.addEvent(eventDto);
     }
@@ -49,8 +53,22 @@ public class EventController {
     @ResponseBody
     @PostMapping (value = "/allEvents")
     public List<EventDto> getAllEvents(@RequestParam Integer year){
-        return eventService.allEvents(year);
+        List<EventDto> listToReturn = eventService.allEvents(year);
+        return listToReturn;
     }
+
+    @ResponseBody
+    @PostMapping(value = "/findEvent")
+    public Event findByTitle(@RequestParam String title) {
+        return eventService.findEventByTitle(title);
+    }
+
+    @PostMapping(value = "/updateEvent/{id_event}")
+    public ResponseEntity<String> updateEvent(@RequestBody EventDto eventDto, @PathVariable Long id_event) {
+        String responseMessage = eventService.updateEventService(eventDto,id_event);
+        return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
+    }
+
 
 
 

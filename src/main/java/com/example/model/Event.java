@@ -1,7 +1,6 @@
 package com.example.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class Event implements Serializable {
     private String description;
 
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
     private List<Person> people = new ArrayList<>();
 
     public Event(){}
@@ -135,7 +134,7 @@ public class Event implements Serializable {
                 ", month=" + month +
                 ", day=" + day +
                 ", description='" + description + '\'' +
-                ", people=" + people +
+                ", people=" + people.size() +
                 '}';
     }
 }

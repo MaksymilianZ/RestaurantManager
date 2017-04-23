@@ -14,4 +14,10 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByYearOrderByMonthAsc(Integer year);
+
+    void deleteByTitle(String title);
+
+    Event findByTitle(String title);
+
+    Event findById(Long id);
 }

@@ -38,12 +38,7 @@ public class EventService {
 
     @Transactional
     public void deleteEventByTitle(String title) {
-        List<Event> events = eventRepository.findAll();
-        for (Event event: events) {
-            if (event.getTitle().equals(title)){
-                eventRepository.delete(event);
-            }
-        }
+        eventRepository.deleteByTitle(title);
     }
 
     @Transactional
@@ -74,5 +69,22 @@ public class EventService {
         return  allEventsDto;
     }
 
+    @Transactional
+    public Event findEventByTitle(String title) {
+        return eventRepository.findByTitle(title);
+    }
 
-}
+    @Transactional
+    public String updateEventService(EventDto eventDto, Long id) {
+        Event foundEvent = eventRepository.findById(id);
+        if(foundEvent!=null) {
+            eventRepository.delete(id);
+            foundEvent = EventMapper.INSTANCE.EventDtoToEvent(eventDto);
+            eventRepository.save(foundEvent);
+            return "Event has been updated";
+        }
+            else {
+                return  "Event has been not found";
+            }
+        }
+    }
