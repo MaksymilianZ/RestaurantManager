@@ -28,44 +28,44 @@ public class EventController {
         this.eventService=eventService;
     }
 
-    @PostMapping(value = "/addEvent", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/createEvent")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addEvent(@RequestBody EventDto eventDto) {
-        eventService.addEvent(eventDto);
+    public void createEvent(@RequestBody EventDto eventDto) {
+        eventService.createEventServiceMethod(eventDto);
     }
 
-    @PostMapping(path = "/deleteEventByTitle")
-        public void deleteByTitle(@RequestParam String titleName){
-        eventService.deleteEventByTitle(titleName);
+    @DeleteMapping("/deleteEventByTitle")
+        public void deleteEventByTitle(@RequestParam String eventTitle){
+        eventService.deleteEventByTitleServiceMethod(eventTitle);
     }
 
-    @DeleteMapping("/delete/{id_event}")
-    public void deleteById(@PathVariable Long id_event) {
-        eventService.deleteEventById(id_event);
+    @DeleteMapping("/deleteEventById/{id_event}")
+    public void deleteEventById(@PathVariable Long id_event) {
+        eventService.deleteEventByIdServiceMethod(id_event);
     }
 
     @ResponseBody
-    @PostMapping(value = "/checkEventDate")
+    @PostMapping("/checkEventDate")
         public String checkEventDate (@RequestParam Integer year, @RequestParam Integer month, @RequestParam Integer day) {
-         return eventService.checkDate(year,month,day);
+         return eventService.checkEventDateServiceMethod(year,month,day);
     }
 
     @ResponseBody
-    @PostMapping (value = "/allEvents")
-    public List<EventDto> getAllEvents(@RequestParam Integer year){
-        List<EventDto> listToReturn = eventService.allEvents(year);
+    @PostMapping ("/allEvents")
+    public List<EventDto> getAllYearEvents(@RequestParam Integer year){
+        List<EventDto> listToReturn = eventService.getAllYearEventsServiceMethod(year);
         return listToReturn;
     }
 
     @ResponseBody
-    @PostMapping(value = "/findEvent")
-    public Event findByTitle(@RequestParam String title) {
-        return eventService.findEventByTitle(title);
+    @PostMapping("/findEvent")
+    public Event findEventByTitle(@RequestParam String eventTitle) {
+        return eventService.findEventByTitleServiceMethod(eventTitle);
     }
 
     @PostMapping(value = "/updateEvent/{id_event}")
     public ResponseEntity<String> updateEvent(@RequestBody EventDto eventDto, @PathVariable Long id_event) {
-        String responseMessage = eventService.updateEventService(eventDto,id_event);
+        String responseMessage = eventService.updateEventServiceMethod(eventDto,id_event);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }
 

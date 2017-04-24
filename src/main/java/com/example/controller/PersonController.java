@@ -26,27 +26,29 @@ public class PersonController {
     }
 
 
-    @PostMapping(value = "/addPersonToEvent")
+    @PostMapping("/addPersonToEvent")
     @ResponseBody
     public String addPersonToEvent(@RequestBody PersonDto personDto, @RequestParam String eventTitle) {
-        return personService.addPersonToEventService(personDto, eventTitle);
+        return personService.addPersonToEventServiceMethod(personDto, eventTitle);
     }
 
 
     @DeleteMapping("/deletePerson/{id_person}")
-    public void deleteById(@PathVariable Long id_person) {
-        personService.deletePersonById(id_person);
+    public void deletePersonById(@PathVariable Long id_person) {
+        personService.deletePersonByIdServiceMethod(id_person);
     }
+
 
     @ResponseBody
     @PostMapping("/findPeopleTakingPartInEvent")
     public List<String> findPeopleByIdEvent(@RequestParam Long id) {
-        return personService.findPeopleByIdEventService(id);
+        return personService.findPeopleByIdEventServiceMethod(id);
     }
+
 
     @PostMapping("/updatePerson/{id_person}")
     public ResponseEntity<String> updatePerson(@RequestBody PersonDto personDto, @PathVariable Long id_person) {
-        String responseMessage = personService.updatePersonService(personDto, id_person);
+        String responseMessage = personService.updatePersonServiceMethod(personDto, id_person);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }
 }

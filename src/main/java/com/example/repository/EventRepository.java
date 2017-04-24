@@ -19,5 +19,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Event findByTitle(String title);
 
-    Event findById(Long id);
 }

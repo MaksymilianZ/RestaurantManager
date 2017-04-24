@@ -28,15 +28,21 @@ public class PersonService {
         this.eventRepository=eventRepository;
     }
 
-    public String addPersonToEventService (PersonDto personDto, String eventTitle){
+    public String addPersonToEventServiceMethod (PersonDto personDto, String eventTitle){
         Person person = PersonMapper.INSTANCE.PersonDtoToPerson(personDto);
             Event event = eventRepository.findByTitle(eventTitle);
             person.setEvent(event);
             personRepository.save(person);
-            return person.toString() + "added";
+            return person.getFirstName().toString() + " " + person.getLastName().toString() + " added to " + event.getTitle();
     }
 
-    public List<String> findPeopleByIdEventService(Long id){
+
+    public void deletePersonByIdServiceMethod(Long id) {
+        personRepository.delete(id);
+    }
+
+
+    public List<String> findPeopleByIdEventServiceMethod(Long id){
         List<Person> people = personRepository.findAll();
         List<String> peopleFind = new ArrayList<>();
         for (Person person : people) {
@@ -47,11 +53,8 @@ public class PersonService {
         return  peopleFind;
     }
 
-    public void deletePersonById(Long id) {
-        personRepository.delete(id);
-    }
 
-    public String updatePersonService(PersonDto personDto, Long id_person) {
+    public String updatePersonServiceMethod(PersonDto personDto, Long id_person) {
         Person foundPerson = personRepository.findOne(id_person);
         if (foundPerson!=null) {
             Event eventFromFoundPerson  = foundPerson.getEvent();

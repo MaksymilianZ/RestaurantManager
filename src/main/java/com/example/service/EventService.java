@@ -30,36 +30,36 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    @Transactional
-    public void addEvent(EventDto eventDto) {
+
+    public void createEventServiceMethod(EventDto eventDto) {
         Event event = EventMapper.INSTANCE.EventDtoToEvent( eventDto );
         eventRepository.save(event);
     }
 
-    @Transactional
-    public void deleteEventByTitle(String title) {
-        eventRepository.deleteByTitle(title);
+
+    public void deleteEventByTitleServiceMethod(String eventTitle) {
+        eventRepository.deleteByTitle(eventTitle);
     }
 
-    @Transactional
-    public void deleteEventById(Long id_event) {
+
+    public void deleteEventByIdServiceMethod(Long id_event) {
         eventRepository.delete(id_event);
     }
 
-    @Transactional
-    public String checkDate(Integer year, Integer month, Integer day) {
-        List<Event> actuallEvents = eventRepository.findAll();
-        String dateCheckMessage = "notReserved";
-        for(Event event : actuallEvents) {
+
+    public String checkEventDateServiceMethod(Integer year, Integer month, Integer day) {
+        List<Event> actualEvents = eventRepository.findAll();
+        String dateCheckMessage = "Date not reserved";
+        for(Event event : actualEvents) {
             if(year.equals(event.getYear())&&month.equals(event.getMonth())&&day.equals(event.getDay())){
-                 dateCheckMessage = "reserved";
+                 dateCheckMessage = "Date reserved";
             }
         }
         return dateCheckMessage;
     }
 
-    @Transactional
-    public List<EventDto> allEvents(Integer year) {
+
+    public List<EventDto> getAllYearEventsServiceMethod(Integer year) {
         List<Event> allEvents= eventRepository.findByYearOrderByMonthAsc(year);
         List<EventDto> allEventsDto = new ArrayList<>();
         for (Event event : allEvents) {
@@ -69,18 +69,18 @@ public class EventService {
         return  allEventsDto;
     }
 
-    @Transactional
-    public Event findEventByTitle(String title) {
-        return eventRepository.findByTitle(title);
+
+    public Event findEventByTitleServiceMethod(String eventTitle) {
+        return eventRepository.findByTitle(eventTitle);
     }
 
-    @Transactional
-    public String updateEventService(EventDto eventDto, Long id) {
-        Event foundEvent = eventRepository.findById(id);
+
+    public String updateEventServiceMethod(EventDto eventDto, Long id_event) {
+        Event foundEvent = eventRepository.findOne(id_event);
         if(foundEvent!=null) {
-            eventRepository.delete(id);
-            foundEvent = EventMapper.INSTANCE.EventDtoToEvent(eventDto);
-            eventRepository.save(foundEvent);
+            eventRepository.delete(id_event);
+            Event event = EventMapper.INSTANCE.EventDtoToEvent(eventDto);
+            eventRepository.save(event);
             return "Event has been updated";
         }
             else {
