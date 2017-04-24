@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventController {
 
-    private EventService eventService;
+    private final EventService eventService;
 
     @Autowired
     public EventController(EventService eventService) {
@@ -29,43 +29,42 @@ public class EventController {
     }
 
     @PostMapping("/createEvent")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createEvent(@RequestBody EventDto eventDto) {
-        eventService.createEventServiceMethod(eventDto);
+    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
+        return new ResponseEntity(eventService.createEvent(eventDto), HttpStatus.CREATED);
+
     }
 
     @DeleteMapping("/deleteEventByTitle")
-        public void deleteEventByTitle(@RequestParam String eventTitle){
-        eventService.deleteEventByTitleServiceMethod(eventTitle);
+    public ResponseEntity<EventDto> deleteEventByTitle(@RequestParam String eventTitle){
+         return new ResponseEntity<EventDto>(eventService.deleteEventByTitle(eventTitle), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteEventById/{id_event}")
-    public void deleteEventById(@PathVariable Long id_event) {
-        eventService.deleteEventByIdServiceMethod(id_event);
+    public ResponseEntity<EventDto> deleteEventById(@PathVariable Long id_event) {
+        return new ResponseEntity<EventDto>(eventService.deleteEventById(id_event), HttpStatus.OK);
     }
 
     @ResponseBody
     @PostMapping("/checkEventDate")
         public String checkEventDate (@RequestParam Integer year, @RequestParam Integer month, @RequestParam Integer day) {
-         return eventService.checkEventDateServiceMethod(year,month,day);
+         return eventService.checkEventDate(year,month,day);
     }
 
     @ResponseBody
     @PostMapping ("/allEvents")
-    public List<EventDto> getAllYearEvents(@RequestParam Integer year){
-        List<EventDto> listToReturn = eventService.getAllYearEventsServiceMethod(year);
-        return listToReturn;
+    public ResponseEntity<List<EventDto>> getAlleventsByYear(@RequestParam Integer year){
+        return new ResponseEntity<List<EventDto>>(eventService.getAllYearEvents(year), HttpStatus.OK);
     }
 
     @ResponseBody
     @PostMapping("/findEvent")
-    public Event findEventByTitle(@RequestParam String eventTitle) {
-        return eventService.findEventByTitleServiceMethod(eventTitle);
+    public ResponseEntity<EventDto> findEventByTitle(@RequestParam String eventTitle) {
+        return new ResponseEntity<EventDto>(eventService.findEventByTitle(eventTitle), HttpStatus.OK);
     }
 
     @PostMapping(value = "/updateEvent/{id_event}")
     public ResponseEntity<String> updateEvent(@RequestBody EventDto eventDto, @PathVariable Long id_event) {
-        String responseMessage = eventService.updateEventServiceMethod(eventDto,id_event);
+        String responseMessage = eventService.updateEvent(eventDto,id_event);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }
 

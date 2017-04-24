@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface PersonMapper {
     PersonMapper INSTANCE = Mappers.getMapper(PersonMapper.class);
-    Person PersonDtoToPerson (PersonDto personDto);
-    PersonDto PersonToPersonDto (Person person);
+    Person personDtoToPerson (PersonDto personDto);
+    PersonDto personToPersonDto (Person person);
 
 }

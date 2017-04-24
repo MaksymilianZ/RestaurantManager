@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/people")
 public class PersonController {
 
-    private PersonService personService;
+    private final PersonService personService;
 
     @Autowired
     public PersonController(PersonService personService) {
@@ -26,29 +26,29 @@ public class PersonController {
     }
 
 
-    @PostMapping("/addPersonToEvent")
     @ResponseBody
-    public String addPersonToEvent(@RequestBody PersonDto personDto, @RequestParam String eventTitle) {
-        return personService.addPersonToEventServiceMethod(personDto, eventTitle);
+    @PostMapping("/addPersonToEvent")
+    public ResponseEntity<PersonDto> addPersonToEvent(@RequestBody PersonDto personDto, @RequestParam String eventTitle) {
+        return new ResponseEntity<PersonDto>(personService.addPersonToEvent(personDto, eventTitle), HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/deletePerson/{id_person}")
-    public void deletePersonById(@PathVariable Long id_person) {
-        personService.deletePersonByIdServiceMethod(id_person);
+    public ResponseEntity<PersonDto> deletePersonById(@PathVariable Long id_person) {
+        return new ResponseEntity<PersonDto>(personService.deletePersonById(id_person), HttpStatus.OK);
     }
 
 
     @ResponseBody
-    @PostMapping("/findPeopleTakingPartInEvent")
+    @PostMapping("/findPeopleByIdEvent")
     public List<String> findPeopleByIdEvent(@RequestParam Long id) {
-        return personService.findPeopleByIdEventServiceMethod(id);
+        return personService.findPeopleByIdEvent(id);
     }
 
 
     @PostMapping("/updatePerson/{id_person}")
     public ResponseEntity<String> updatePerson(@RequestBody PersonDto personDto, @PathVariable Long id_person) {
-        String responseMessage = personService.updatePersonServiceMethod(personDto, id_person);
+        String responseMessage = personService.updatePerson(personDto, id_person);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }
 }

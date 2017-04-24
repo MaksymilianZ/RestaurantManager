@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class EventDto {
 
-    private Long id = null;
     private String title;
     private Integer year;
     private Integer month;
@@ -20,23 +19,13 @@ public class EventDto {
 
     public EventDto(){};
 
-    public EventDto(Long id, String title, Integer year, Integer month, Integer day, String description, List<Person> people) {
-        this.id = id;
+    public EventDto(String title, Integer year, Integer month, Integer day, String description, List<Person> people) {
         this.title = title;
         this.year = year;
         this.month = month;
         this.day = day;
         this.description = description;
         this.people = people;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {

@@ -19,8 +19,8 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    private PersonRepository personRepository;
-    private EventRepository eventRepository;
+    private final PersonRepository personRepository;
+    private final EventRepository eventRepository;
 
     @Autowired
     public PersonService(PersonRepository personRepository, EventRepository eventRepository) {
@@ -28,21 +28,25 @@ public class PersonService {
         this.eventRepository=eventRepository;
     }
 
-    public String addPersonToEventServiceMethod (PersonDto personDto, String eventTitle){
-        Person person = PersonMapper.INSTANCE.PersonDtoToPerson(personDto);
+    public PersonDto addPersonToEvent (PersonDto personDto, String eventTitle){
+        Person person = PersonMapper.INSTANCE.personDtoToPerson(personDto);
             Event event = eventRepository.findByTitle(eventTitle);
             person.setEvent(event);
             personRepository.save(person);
-            return person.getFirstName().toString() + " " + person.getLastName().toString() + " added to " + event.getTitle();
+        PersonDto returnPersonDto = PersonMapper.INSTANCE.personToPersonDto(person);
+            return returnPersonDto;
     }
 
 
-    public void deletePersonByIdServiceMethod(Long id) {
+    public PersonDto deletePersonById(Long id) {
+        Person person = personRepository.findOne(id);
         personRepository.delete(id);
+        PersonDto returnPersonDto = PersonMapper.INSTANCE.personToPersonDto(person);
+        return returnPersonDto;
     }
 
 
-    public List<String> findPeopleByIdEventServiceMethod(Long id){
+    public List<String> findPeopleByIdEvent(Long id){
         List<Person> people = personRepository.findAll();
         List<String> peopleFind = new ArrayList<>();
         for (Person person : people) {
@@ -54,17 +58,17 @@ public class PersonService {
     }
 
 
-    public String updatePersonServiceMethod(PersonDto personDto, Long id_person) {
+    public String updatePerson(PersonDto personDto, Long id_person) {
         Person foundPerson = personRepository.findOne(id_person);
         if (foundPerson!=null) {
             Event eventFromFoundPerson  = foundPerson.getEvent();
             personRepository.delete(id_person);
-            Person person = PersonMapper.INSTANCE.PersonDtoToPerson(personDto);
+            Person person = PersonMapper.INSTANCE.personDtoToPerson(personDto);
             person.setEvent(eventFromFoundPerson);
             personRepository.save(person);
-            return "Person has been updated";
+            return "Person " + person.getFirstName() + " " + person.getLastName() + " updated";
         } else {
-            return "Person has been not found";
+            return "Person not found";
         }
     }
 }

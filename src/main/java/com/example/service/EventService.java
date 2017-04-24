@@ -2,17 +2,13 @@ package com.example.service;
 
 import com.example.mappers.EventMapper;
 import com.example.model.Event;
-import com.example.model.Person;
 import com.example.modelDto.EventDto;
 import com.example.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +19,7 @@ import java.util.List;
 @Service
 public class EventService {
 
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
     @Autowired
     public EventService(EventRepository eventRepository) {
@@ -31,23 +27,32 @@ public class EventService {
     }
 
 
-    public void createEventServiceMethod(EventDto eventDto) {
-        Event event = EventMapper.INSTANCE.EventDtoToEvent( eventDto );
+    public EventDto createEvent(EventDto eventDto) {
+        Event event = EventMapper.INSTANCE.eventDtoToEvent( eventDto );
         eventRepository.save(event);
+        EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
+        return returnEventDto;
     }
 
 
-    public void deleteEventByTitleServiceMethod(String eventTitle) {
+    @Transactional
+    public EventDto deleteEventByTitle(String eventTitle) {
+        Event event = eventRepository.findByTitle(eventTitle);
         eventRepository.deleteByTitle(eventTitle);
+        EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
+        return returnEventDto;
     }
 
 
-    public void deleteEventByIdServiceMethod(Long id_event) {
+    public EventDto deleteEventById(Long id_event) {
+        Event event = eventRepository.findOne(id_event);
         eventRepository.delete(id_event);
+        EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
+        return returnEventDto;
     }
 
 
-    public String checkEventDateServiceMethod(Integer year, Integer month, Integer day) {
+    public String checkEventDate(Integer year, Integer month, Integer day) {
         List<Event> actualEvents = eventRepository.findAll();
         String dateCheckMessage = "Date not reserved";
         for(Event event : actualEvents) {
@@ -59,32 +64,34 @@ public class EventService {
     }
 
 
-    public List<EventDto> getAllYearEventsServiceMethod(Integer year) {
+    public List<EventDto> getAllYearEvents(Integer year) {
         List<Event> allEvents= eventRepository.findByYearOrderByMonthAsc(year);
         List<EventDto> allEventsDto = new ArrayList<>();
         for (Event event : allEvents) {
-            EventDto eventDto = EventMapper.INSTANCE.EventToEventDto(event);
+            EventDto eventDto = EventMapper.INSTANCE.eventToEventDto(event);
             allEventsDto.add(eventDto);
         }
         return  allEventsDto;
     }
 
 
-    public Event findEventByTitleServiceMethod(String eventTitle) {
-        return eventRepository.findByTitle(eventTitle);
+    public EventDto findEventByTitle(String eventTitle) {
+        Event event = eventRepository.findByTitle(eventTitle);
+        EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
+        return returnEventDto;
     }
 
 
-    public String updateEventServiceMethod(EventDto eventDto, Long id_event) {
+    public String updateEvent(EventDto eventDto, Long id_event) {
         Event foundEvent = eventRepository.findOne(id_event);
         if(foundEvent!=null) {
             eventRepository.delete(id_event);
-            Event event = EventMapper.INSTANCE.EventDtoToEvent(eventDto);
+            Event event = EventMapper.INSTANCE.eventDtoToEvent(eventDto);
             eventRepository.save(event);
-            return "Event has been updated";
+            return "Event " + event.getTitle() +  " updated";
         }
             else {
-                return  "Event has been not found";
+                return  "Event for update not found";
             }
         }
     }
