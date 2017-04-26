@@ -1,6 +1,7 @@
 package com.example.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class Event implements Serializable {
     @Column(name = "id_event")
     private Long id;
 
-    @Column(nullable = false)
+    //@NotNull
     private String title;
     private Integer year;
     private Integer month;

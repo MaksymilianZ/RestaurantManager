@@ -8,6 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -28,26 +33,26 @@ public class PersonController {
 
     @ResponseBody
     @PostMapping("/addPersonToEvent")
-    public ResponseEntity<PersonDto> addPersonToEvent(@RequestBody PersonDto personDto, @RequestParam String eventTitle) {
+    public ResponseEntity<PersonDto> addPersonToEvent(@Valid @RequestBody PersonDto personDto, @RequestParam String eventTitle) throws ConstraintViolationException, EntityExistsException, EntityNotFoundException{
         return new ResponseEntity<PersonDto>(personService.addPersonToEvent(personDto, eventTitle), HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/deletePerson/{id_person}")
-    public ResponseEntity<PersonDto> deletePersonById(@PathVariable Long id_person) {
+    public ResponseEntity<PersonDto> deletePersonById(@PathVariable Long id_person) throws EntityNotFoundException {
         return new ResponseEntity<PersonDto>(personService.deletePersonById(id_person), HttpStatus.OK);
     }
 
 
     @ResponseBody
     @PostMapping("/findPeopleByIdEvent")
-    public List<String> findPeopleByIdEvent(@RequestParam Long id) {
+    public List<String> findPeopleByIdEvent(@RequestParam Long id) throws EntityNotFoundException, NoResultException {
         return personService.findPeopleByIdEvent(id);
     }
 
 
     @PostMapping("/updatePerson/{id_person}")
-    public ResponseEntity<String> updatePerson(@RequestBody PersonDto personDto, @PathVariable Long id_person) {
+    public ResponseEntity<String> updatePerson(@Valid @RequestBody PersonDto personDto, @PathVariable Long id_person) throws ConstraintViolationException, EntityNotFoundException {
         String responseMessage = personService.updatePerson(personDto, id_person);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }

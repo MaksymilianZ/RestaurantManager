@@ -2,6 +2,7 @@ package com.example.modelDto;
 
 import com.example.model.Person;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +11,16 @@ import java.util.List;
  */
 public class EventDto {
 
+    @NotNull(message = "Title cannot be null")
     private String title;
+
+    @NotNull(message = "Year cannot be null")
     private Integer year;
+
+    @NotNull(message = "Month cannot be null")
     private Integer month;
+
+    @NotNull(message = "Day cannot be null")
     private Integer day;
     private String description;
     private List<Person> people = new ArrayList<>();

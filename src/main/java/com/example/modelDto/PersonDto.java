@@ -2,6 +2,9 @@ package com.example.modelDto;
 
 import com.example.model.Event;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 /**
  * Created by Maksymilian on 2017-04-19.
@@ -9,8 +12,13 @@ import com.example.model.Event;
 
 public class PersonDto {
 
+    @NotNull(message = "First name cannot be null")
     private String firstName;
+
+    @NotNull(message = "Last name cannot be null")
     private String lastName;
+
+    @Size(min = 11, max = 11)
     private String pesel;
     private String details;
     private Event event;

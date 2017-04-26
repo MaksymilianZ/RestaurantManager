@@ -5,10 +5,15 @@ import com.example.model.Event;
 import com.example.modelDto.EventDto;
 import com.example.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +32,12 @@ public class EventService {
     }
 
 
-    public EventDto createEvent(EventDto eventDto) {
+    public EventDto createEvent(EventDto eventDto) throws EntityExistsException{
         Event event = EventMapper.INSTANCE.eventDtoToEvent( eventDto );
+        Event checkingEvent = eventRepository.findByTitle(event.getTitle());
+        if (checkingEvent!=null) {
+            throw new EntityExistsException("Event already exist.");
+        }
         eventRepository.save(event);
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
@@ -36,16 +45,21 @@ public class EventService {
 
 
     @Transactional
-    public EventDto deleteEventByTitle(String eventTitle) {
+    public EventDto deleteEventByTitle(String eventTitle) throws EntityNotFoundException{
         Event event = eventRepository.findByTitle(eventTitle);
+        if(event==null) {
+            throw new EntityNotFoundException("No such event. Check title.");
+        }
         eventRepository.deleteByTitle(eventTitle);
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
     }
 
 
-    public EventDto deleteEventById(Long id_event) {
+    public EventDto deleteEventById(Long id_event) throws EntityNotFoundException {
         Event event = eventRepository.findOne(id_event);
+        if(event==null)
+            throw new EntityNotFoundException("No such event. Check id.");
         eventRepository.delete(id_event);
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
@@ -64,8 +78,11 @@ public class EventService {
     }
 
 
-    public List<EventDto> getAllYearEvents(Integer year) {
+    public List<EventDto> getAllYearEvents(Integer year) throws NoResultException {
         List<Event> allEvents= eventRepository.findByYearOrderByMonthAsc(year);
+        if(allEvents.size()==0) {
+            throw new NoResultException("No events im memory.");
+        }
         List<EventDto> allEventsDto = new ArrayList<>();
         for (Event event : allEvents) {
             EventDto eventDto = EventMapper.INSTANCE.eventToEventDto(event);
@@ -75,23 +92,24 @@ public class EventService {
     }
 
 
-    public EventDto findEventByTitle(String eventTitle) {
+    public EventDto findEventByTitle(String eventTitle) throws EntityNotFoundException{
         Event event = eventRepository.findByTitle(eventTitle);
+        if(event==null) {
+            throw new EntityNotFoundException("No such event. Check title.");
+        }
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
     }
 
 
-    public String updateEvent(EventDto eventDto, Long id_event) {
+    public String updateEvent(EventDto eventDto, Long id_event) throws EntityNotFoundException {
         Event foundEvent = eventRepository.findOne(id_event);
-        if(foundEvent!=null) {
+        if(foundEvent==null) {
+            throw new EntityNotFoundException("Update failed. No such event. Check id");
+        }
             eventRepository.delete(id_event);
             Event event = EventMapper.INSTANCE.eventDtoToEvent(eventDto);
             eventRepository.save(event);
             return "Event " + event.getTitle() +  " updated";
-        }
-            else {
-                return  "Event for update not found";
-            }
         }
     }

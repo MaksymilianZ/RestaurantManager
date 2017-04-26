@@ -1,6 +1,7 @@
 package com.example.controller;
 
 
+
 import com.example.model.Event;
 import com.example.modelDto.EventDto;
 import com.example.service.EventService;
@@ -9,7 +10,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 
 import java.util.List;
 
@@ -29,18 +37,18 @@ public class EventController {
     }
 
     @PostMapping("/createEvent")
-    public ResponseEntity<EventDto> createEvent(@RequestBody EventDto eventDto) {
-        return new ResponseEntity(eventService.createEvent(eventDto), HttpStatus.CREATED);
+    public ResponseEntity<EventDto> createEvent(@Valid @RequestBody EventDto eventDto) throws ConstraintViolationException, EntityExistsException {
+        return new ResponseEntity<EventDto>(eventService.createEvent(eventDto), HttpStatus.CREATED);
 
     }
 
     @DeleteMapping("/deleteEventByTitle")
-    public ResponseEntity<EventDto> deleteEventByTitle(@RequestParam String eventTitle){
-         return new ResponseEntity<EventDto>(eventService.deleteEventByTitle(eventTitle), HttpStatus.OK);
+    public ResponseEntity<EventDto> deleteEventByTitle(@RequestParam String title) throws EntityNotFoundException{
+         return new ResponseEntity<EventDto>(eventService.deleteEventByTitle(title), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteEventById/{id_event}")
-    public ResponseEntity<EventDto> deleteEventById(@PathVariable Long id_event) {
+    public ResponseEntity<EventDto> deleteEventById(@PathVariable Long id_event) throws EntityNotFoundException{
         return new ResponseEntity<EventDto>(eventService.deleteEventById(id_event), HttpStatus.OK);
     }
 
@@ -51,25 +59,21 @@ public class EventController {
     }
 
     @ResponseBody
-    @PostMapping ("/allEvents")
-    public ResponseEntity<List<EventDto>> getAlleventsByYear(@RequestParam Integer year){
+    @PostMapping ("/allYearEvents")
+    public ResponseEntity<List<EventDto>> getAlleventsByYear(@RequestParam Integer year) throws NoResultException{
         return new ResponseEntity<List<EventDto>>(eventService.getAllYearEvents(year), HttpStatus.OK);
     }
 
     @ResponseBody
     @PostMapping("/findEvent")
-    public ResponseEntity<EventDto> findEventByTitle(@RequestParam String eventTitle) {
+    public ResponseEntity<EventDto> findEventByTitle(@RequestParam String eventTitle) throws EntityNotFoundException{
         return new ResponseEntity<EventDto>(eventService.findEventByTitle(eventTitle), HttpStatus.OK);
     }
 
     @PostMapping(value = "/updateEvent/{id_event}")
-    public ResponseEntity<String> updateEvent(@RequestBody EventDto eventDto, @PathVariable Long id_event) {
+    public ResponseEntity<String> updateEvent(@Valid @RequestBody EventDto eventDto, @PathVariable Long id_event) throws ConstraintViolationException, EntityNotFoundException {
         String responseMessage = eventService.updateEvent(eventDto,id_event);
         return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
     }
-
-
-
-
 }
 
