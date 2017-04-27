@@ -72,4 +72,17 @@ public class PersonDto {
     public void setEvent(Event event) {
         this.event = event;
     }
+
+    @Override
+    public String toString() {
+        return "PersonDto{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", pesel='" + pesel + '\'' +
+                ", details='" + details + '\'' +
+                ", event=" + event.getTitle() +
+                '}';
+    }
 }
+
+

@@ -120,7 +120,7 @@ public class Person implements Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", pesel='" + pesel + '\'' +
                 ", details='" + details + '\'' +
-                ", event=" + event +
+                ", event=" + event.getTitle() +
                 ']';
     }
 }

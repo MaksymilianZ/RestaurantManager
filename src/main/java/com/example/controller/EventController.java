@@ -36,20 +36,20 @@ public class EventController {
         this.eventService=eventService;
     }
 
-    @PostMapping("/createEvent")
+    @PostMapping
     public ResponseEntity<EventDto> createEvent(@Valid @RequestBody EventDto eventDto) throws ConstraintViolationException, EntityExistsException {
-        return new ResponseEntity<EventDto>(eventService.createEvent(eventDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(eventService.createEvent(eventDto), HttpStatus.CREATED);
 
     }
 
     @DeleteMapping("/deleteEventByTitle")
     public ResponseEntity<EventDto> deleteEventByTitle(@RequestParam String title) throws EntityNotFoundException{
-         return new ResponseEntity<EventDto>(eventService.deleteEventByTitle(title), HttpStatus.OK);
+         return new ResponseEntity<>(eventService.deleteEventByTitle(title), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteEventById/{id_event}")
     public ResponseEntity<EventDto> deleteEventById(@PathVariable Long id_event) throws EntityNotFoundException{
-        return new ResponseEntity<EventDto>(eventService.deleteEventById(id_event), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.deleteEventById(id_event), HttpStatus.OK);
     }
 
     @ResponseBody
@@ -59,21 +59,21 @@ public class EventController {
     }
 
     @ResponseBody
-    @PostMapping ("/allYearEvents")
+    @GetMapping ("/allYearEvents")
     public ResponseEntity<List<EventDto>> getAlleventsByYear(@RequestParam Integer year) throws NoResultException{
-        return new ResponseEntity<List<EventDto>>(eventService.getAllYearEvents(year), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getAllYearEvents(year), HttpStatus.OK);
     }
 
     @ResponseBody
-    @PostMapping("/findEvent")
+    @GetMapping("/findEvent")
     public ResponseEntity<EventDto> findEventByTitle(@RequestParam String eventTitle) throws EntityNotFoundException{
-        return new ResponseEntity<EventDto>(eventService.findEventByTitle(eventTitle), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.findEventByTitle(eventTitle), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/updateEvent/{id_event}")
+    @PutMapping(value = "/updateEvent/{id_event}")
     public ResponseEntity<String> updateEvent(@Valid @RequestBody EventDto eventDto, @PathVariable Long id_event) throws ConstraintViolationException, EntityNotFoundException {
         String responseMessage = eventService.updateEvent(eventDto,id_event);
-        return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 }
 

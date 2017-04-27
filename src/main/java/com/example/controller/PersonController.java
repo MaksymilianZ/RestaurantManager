@@ -32,28 +32,28 @@ public class PersonController {
 
 
     @ResponseBody
-    @PostMapping("/addPersonToEvent")
+    @PostMapping
     public ResponseEntity<PersonDto> addPersonToEvent(@Valid @RequestBody PersonDto personDto, @RequestParam String eventTitle) throws ConstraintViolationException, EntityExistsException, EntityNotFoundException{
-        return new ResponseEntity<PersonDto>(personService.addPersonToEvent(personDto, eventTitle), HttpStatus.CREATED);
+        return new ResponseEntity<>(personService.addPersonToEvent(personDto, eventTitle), HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/deletePerson/{id_person}")
-    public ResponseEntity<PersonDto> deletePersonById(@PathVariable Long id_person) throws EntityNotFoundException {
-        return new ResponseEntity<PersonDto>(personService.deletePersonById(id_person), HttpStatus.OK);
+    public ResponseEntity<String> deletePersonById(@PathVariable Long id_person) throws EntityNotFoundException {
+        return new ResponseEntity<>(personService.deletePersonById(id_person), HttpStatus.OK);
     }
 
 
     @ResponseBody
-    @PostMapping("/findPeopleByIdEvent")
+    @GetMapping("/findPeopleByIdEvent")
     public List<String> findPeopleByIdEvent(@RequestParam Long id) throws EntityNotFoundException, NoResultException {
         return personService.findPeopleByIdEvent(id);
     }
 
 
-    @PostMapping("/updatePerson/{id_person}")
+    @PutMapping("/updatePerson/{id_person}")
     public ResponseEntity<String> updatePerson(@Valid @RequestBody PersonDto personDto, @PathVariable Long id_person) throws ConstraintViolationException, EntityNotFoundException {
         String responseMessage = personService.updatePerson(personDto, id_person);
-        return new ResponseEntity<String>(responseMessage, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 }

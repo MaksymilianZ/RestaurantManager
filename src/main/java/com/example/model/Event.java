@@ -135,7 +135,7 @@ public class Event implements Serializable {
                 ", month=" + month +
                 ", day=" + day +
                 ", description='" + description + '\'' +
-                ", people=" + people.size() +
+                ", people=" + people +
                 '}';
     }
 }

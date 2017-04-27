@@ -16,6 +16,7 @@ import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Maksymilian on 2017-04-18.
@@ -45,11 +46,9 @@ public class EventService {
 
 
     @Transactional
-    public EventDto deleteEventByTitle(String eventTitle) throws EntityNotFoundException{
-        Event event = eventRepository.findByTitle(eventTitle);
-        if(event==null) {
-            throw new EntityNotFoundException("No such event. Check title.");
-        }
+    public EventDto deleteEventByTitle(String eventTitle) throws EntityNotFoundException {
+        Event event = Optional.ofNullable(eventRepository.findByTitle(eventTitle))
+                .orElseThrow( () -> new EntityNotFoundException("Delete operation failed: No such event. Check title"));
         eventRepository.deleteByTitle(eventTitle);
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
@@ -57,9 +56,8 @@ public class EventService {
 
 
     public EventDto deleteEventById(Long id_event) throws EntityNotFoundException {
-        Event event = eventRepository.findOne(id_event);
-        if(event==null)
-            throw new EntityNotFoundException("No such event. Check id.");
+        Event event = Optional.ofNullable(eventRepository.findOne(id_event))
+                .orElseThrow(() -> new EntityNotFoundException("No such event. Check id."));
         eventRepository.delete(id_event);
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
@@ -81,7 +79,7 @@ public class EventService {
     public List<EventDto> getAllYearEvents(Integer year) throws NoResultException {
         List<Event> allEvents= eventRepository.findByYearOrderByMonthAsc(year);
         if(allEvents.size()==0) {
-            throw new NoResultException("No events im memory.");
+            throw new NoResultException("No events im memory for this year.");
         }
         List<EventDto> allEventsDto = new ArrayList<>();
         for (Event event : allEvents) {
@@ -93,20 +91,16 @@ public class EventService {
 
 
     public EventDto findEventByTitle(String eventTitle) throws EntityNotFoundException{
-        Event event = eventRepository.findByTitle(eventTitle);
-        if(event==null) {
-            throw new EntityNotFoundException("No such event. Check title.");
-        }
+        Event event = Optional.ofNullable(eventRepository.findByTitle(eventTitle))
+                .orElseThrow(() -> new EntityNotFoundException("No such event. Check title."));
         EventDto returnEventDto = EventMapper.INSTANCE.eventToEventDto(event);
         return returnEventDto;
     }
 
 
     public String updateEvent(EventDto eventDto, Long id_event) throws EntityNotFoundException {
-        Event foundEvent = eventRepository.findOne(id_event);
-        if(foundEvent==null) {
-            throw new EntityNotFoundException("Update failed. No such event. Check id");
-        }
+        Event foundEvent = Optional.ofNullable(eventRepository.findOne(id_event))
+                .orElseThrow(() -> new EntityNotFoundException("Update failed. No such event. Check id"));
             eventRepository.delete(id_event);
             Event event = EventMapper.INSTANCE.eventDtoToEvent(eventDto);
             eventRepository.save(event);

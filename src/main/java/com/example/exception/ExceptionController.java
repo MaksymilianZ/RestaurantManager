@@ -1,16 +1,18 @@
 package com.example.exception;
 
-import com.example.controller.EventController;
+
+import org.apache.log4j.Logger;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
+
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityExistsException;
+
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
-import javax.validation.ConstraintViolationException;
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Created by Maksymilian on 2017-04-26.
@@ -19,24 +21,32 @@ import javax.validation.ConstraintViolationException;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> exception(EntityNotFoundException e) {
-        ModelAndView view = new ModelAndView();
-        view.addObject(e.getMessage());
-        return new ResponseEntity<Object>(view, HttpStatus.CONFLICT);
-    }
-
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<Object> exception(EntityExistsException e) {
-        ModelAndView view = new ModelAndView();
-        view.addObject(e.getMessage());
-        return new ResponseEntity<Object>(view, HttpStatus.CONFLICT);
+    @ResponseBody
+    ErrorInfo handleEntityExistRequest(HttpServletRequest req, Exception exception) {
+        Logger logger = Logger.getRootLogger();
+        logger.error("Handling EntityExistException. Response status: NOT_FOUND", exception);
+        return new ErrorInfo(req.getRequestURL().toString(), exception);
     }
 
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseBody
+    ErrorInfo handleObjectNotFoundRequest(HttpServletRequest req, Exception exception) {
+        Logger logger = Logger.getRootLogger();
+        logger.error("Handling EntityNotFoundException. Response status: NOT_FOUND", exception);
+        return new ErrorInfo(req.getRequestURL().toString(), exception);
+    }
+
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoResultException.class)
-    public ResponseEntity<Object> exception(NoResultException e) {
-        ModelAndView view = new ModelAndView();
-        view.addObject(e.getMessage());
-        return new ResponseEntity<Object>(view, HttpStatus.CONFLICT);
+    @ResponseBody
+    ErrorInfo handleNoResultRequest(HttpServletRequest req, Exception exception) {
+        Logger logger = Logger.getRootLogger();
+        logger.error("Handling NoResultException. Response status: NOT_FOUND", exception);
+        return new ErrorInfo(req.getRequestURL().toString(), exception);
     }
 }

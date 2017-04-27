@@ -14,6 +14,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Maksymilian on 2017-04-22.
@@ -37,10 +38,8 @@ public class PersonService {
         if(checkingPerson!=null) {
             throw new EntityExistsException("Person already exist");
         }
-            Event event = eventRepository.findByTitle(eventTitle);
-        if(event==null) {
-            throw new EntityNotFoundException("No such event. Cannot add person.");
-        }
+            Event event = Optional.ofNullable(eventRepository.findByTitle(eventTitle))
+                    .orElseThrow(() -> new EntityNotFoundException("No such event. Cannot add person."));
             person.setEvent(event);
             personRepository.save(person);
         PersonDto returnPersonDto = PersonMapper.INSTANCE.personToPersonDto(person);
@@ -48,23 +47,19 @@ public class PersonService {
     }
 
 
-    public PersonDto deletePersonById(Long id) throws EntityNotFoundException {
-        Person person = personRepository.findOne(id);
-        if (person==null) {
-            throw new EntityNotFoundException("No such person. Check id");
-        }
+    public String deletePersonById(Long id) throws EntityNotFoundException {
+        Person person = Optional.ofNullable(personRepository.findOne(id))
+                .orElseThrow(() -> new EntityNotFoundException("No such person. Check id"));
         personRepository.delete(id);
-        PersonDto returnPersonDto = PersonMapper.INSTANCE.personToPersonDto(person);
-        return returnPersonDto;
+        String returnPerson = person.getFirstName() + " " + person.getLastName() + " " + " deleted";
+        return returnPerson;
     }
 
 
     public List<String> findPeopleByIdEvent(Long id) throws EntityNotFoundException, NoResultException{
         List<Person> people = personRepository.findAll();
-        Event event = eventRepository.findOne(id);
-        if(event==null) {
-            throw new EntityNotFoundException("No such person. Check id");
-        }
+        Event event = Optional.ofNullable(eventRepository.findOne(id))
+                .orElseThrow(() -> new EntityNotFoundException("No such person. Check id"));
         List<String> peopleFound = new ArrayList<>();
         for (Person person : people) {
             if(id.equals(person.getEvent().getId())) {
@@ -79,10 +74,8 @@ public class PersonService {
 
 
     public String updatePerson(PersonDto personDto, Long id_person) throws EntityNotFoundException {
-        Person foundPerson = personRepository.findOne(id_person);
-        if (foundPerson==null) {
-            throw new EntityNotFoundException("Update failed. No such person. Check id");
-        }
+        Person foundPerson = Optional.ofNullable(personRepository.findOne(id_person))
+                .orElseThrow(() -> new EntityNotFoundException("Update failed. No such person. Check id"));
             Event eventFromFoundPerson  = foundPerson.getEvent();
             personRepository.delete(id_person);
             Person person = PersonMapper.INSTANCE.personDtoToPerson(personDto);
